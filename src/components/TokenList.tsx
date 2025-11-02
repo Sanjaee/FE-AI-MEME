@@ -2,14 +2,16 @@ import { useEffect, useRef, useState } from "react"
 import { TokenData } from "@/types/token"
 import TokenRow from "./token/TokenRow"
 import TokenTableHeader from "./token/TokenTableHeader"
+import TokenRowSkeleton from "./token/TokenRowSkeleton"
 
 interface TokenListProps {
   tokens: TokenData[]
+  isLoading?: boolean
 }
 
 const ITEMS_PER_PAGE = 20
 
-export default function TokenList({ tokens }: TokenListProps) {
+export default function TokenList({ tokens, isLoading = false }: TokenListProps) {
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE)
   const observerTarget = useRef<HTMLDivElement>(null)
 
@@ -38,6 +40,20 @@ export default function TokenList({ tokens }: TokenListProps) {
 
   const visibleTokens = tokens.slice(0, visibleCount)
   const hasMore = visibleCount < tokens.length
+
+  // Show skeleton when loading
+  if (isLoading) {
+    return (
+      <div className="space-y-0">
+        <TokenTableHeader />
+        <div className="space-y-0">
+          {Array.from({ length: 10 }).map((_, index) => (
+            <TokenRowSkeleton key={`skeleton-${index}`} />
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   if (tokens.length === 0) {
     return (

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react"
 import { Geist, Geist_Mono } from "next/font/google"
+import axios from "axios"
 import { TokenData } from "@/types/token"
 import Header from "@/components/Header"
 import TokenList from "@/components/TokenList"
+import MaintenanceDialog from "@/components/MaintenanceDialog"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,21 +19,22 @@ const geistMono = Geist_Mono({
 export default function Home() {
   const [tokens, setTokens] = useState<TokenData[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [showMaintenance, setShowMaintenance] = useState(false)
 
   const fetchTokens = async () => {
     try {
       setIsRefreshing(true)
-      const response = await fetch(`http://localhost:5000/api/ai-token`, {
-        cache: 'no-store',
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'
+      const response = await axios.get(`${backendUrl}/api/ai-token`, {
         headers: {
           'Cache-Control': 'no-cache',
         },
       })
-      const data = await response.json()
+
+      const data = response.data
 
       if (data.success && data.data && Array.isArray(data.data)) {
         // Normalize snipersHoldPercent untuk semua token (maksimal 3.323437761849493)
@@ -90,13 +93,17 @@ export default function Home() {
         
         setTokens(sortedTokens)
         setLastUpdate(new Date())
-        setError(null)
+        setShowMaintenance(false)
       } else {
-        setError("Failed to fetch tokens")
+        // Jika data tidak valid, set empty tokens tapi tidak tampilkan maintenance
+        setTokens([])
+        setLastUpdate(new Date())
+        setShowMaintenance(false)
       }
     } catch (err) {
+      // Hanya tampilkan maintenance jika fetch benar-benar gagal (network error, HTTP error, dll)
       console.error("Error fetching tokens:", err)
-      setError(err instanceof Error ? err.message : "An error occurred")
+      setShowMaintenance(true)
     } finally {
       setLoading(false)
       setIsRefreshing(false)
@@ -134,18 +141,15 @@ export default function Home() {
           mounted={mounted} 
         />
 
-        {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-zinc-400">Loading tokens...</div>
-          </div>
-        ) : error ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-red-400">Error: {error}</div>
-          </div>
-        ) : (
-          <TokenList tokens={tokens} />
-        )}
+        <TokenList tokens={tokens} isLoading={loading} />
       </div>
+
+      <MaintenanceDialog
+        isOpen={showMaintenance}
+        onRetry={() => {
+          window.location.reload()
+        }}
+      />
     </div>
   )
 }

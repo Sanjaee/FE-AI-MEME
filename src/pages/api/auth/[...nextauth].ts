@@ -1,5 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import axios from "axios";
 
 // Function to refresh access token
 async function refreshAccessToken(token: {
@@ -10,19 +11,13 @@ async function refreshAccessToken(token: {
 }) {
   try {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
-    const response = await fetch(`${backendUrl}/api/auth/refresh`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        refreshToken: token.refreshToken,
-      }),
+    const response = await axios.post(`${backendUrl}/api/auth/refresh`, {
+      refreshToken: token.refreshToken,
     });
 
-    const refreshedTokens = await response.json();
+    const refreshedTokens = response.data;
 
-    if (!response.ok || !refreshedTokens.success) {
+    if (!refreshedTokens.success) {
       throw refreshedTokens;
     }
 
@@ -58,20 +53,14 @@ export const authOptions: NextAuthOptions = {
           try {
             const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
             // Verify the token with backend
-            const response = await fetch(
+            const response = await axios.post(
               `${backendUrl}/api/auth/verify-token`,
               {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  token: credentials.accessToken,
-                }),
+                token: credentials.accessToken,
               }
             );
 
-            const data = await response.json();
+            const data = response.data;
 
             if (data.valid && data.user) {
               return {
@@ -99,21 +88,15 @@ export const authOptions: NextAuthOptions = {
         try {
           const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
           // Regular username/password login
-          const response = await fetch(
+          const response = await axios.post(
             `${backendUrl}/api/auth/login`,
             {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                username: credentials.username,
-                password: credentials.password,
-              }),
+              username: credentials.username,
+              password: credentials.password,
             }
           );
 
-          const data = await response.json();
+          const data = response.data;
 
           if (data.success && data.user && data.accessToken) {
             return {

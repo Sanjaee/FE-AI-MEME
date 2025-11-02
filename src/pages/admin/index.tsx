@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react"
+import axios from "axios"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { formatTimeAgo } from "@/utils/format"
 import {
   Card,
   CardContent,
@@ -34,10 +36,11 @@ export default function AdminPage() {
     const fetchToken = async () => {
       try {
         setLoadingToken(true)
-        const response = await fetch("http://localhost:5000/api/ai-token/token")
-        const data = await response.json()
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'
+        const response = await axios.get(`${backendUrl}/api/ai-token/token`)
+        const data = response.data
 
-        if (response.ok && data.success) {
+        if (data.success) {
           setCurrentToken(data.data)
         }
       } catch (err) {
@@ -63,40 +66,39 @@ export default function AdminPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/ai-token/update", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          authAccessToken,
-          authRefreshToken,
-        }),
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'
+      const response = await axios.post(`${backendUrl}/api/ai-token/update`, {
+        authAccessToken,
+        authRefreshToken,
       })
 
-      const data = await response.json()
+      const data = response.data
 
-      if (!response.ok) {
+      if (data.success) {
+        setSuccess(true)
+        setAuthAccessToken("")
+        setAuthRefreshToken("")
+        
+        // Refetch token setelah update
+        const tokenResponse = await axios.get(`${backendUrl}/api/ai-token/token`)
+        const tokenData = tokenResponse.data
+        if (tokenData.success) {
+          setCurrentToken(tokenData.data)
+        }
+        
+        // Clear success message after 3 seconds
+        setTimeout(() => {
+          setSuccess(false)
+        }, 3000)
+      } else {
         throw new Error(data.message || "Failed to update token")
       }
-
-      setSuccess(true)
-      setAuthAccessToken("")
-      setAuthRefreshToken("")
-      
-      // Refetch token setelah update
-      const tokenResponse = await fetch("http://localhost:5000/api/ai-token/token")
-      const tokenData = await tokenResponse.json()
-      if (tokenResponse.ok && tokenData.success) {
-        setCurrentToken(tokenData.data)
-      }
-      
-      // Clear success message after 3 seconds
-      setTimeout(() => {
-        setSuccess(false)
-      }, 3000)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred")
+      if (axios.isAxiosError(err) && err.response?.data?.message) {
+        setError(err.response.data.message)
+      } else {
+        setError(err instanceof Error ? err.message : "An error occurred")
+      }
     } finally {
       setLoading(false)
     }
@@ -132,7 +134,7 @@ export default function AdminPage() {
                 </div>
                 {currentToken.updatedAt && (
                   <div className="text-sm text-zinc-500 dark:text-zinc-400">
-                    Last updated: {new Date(currentToken.updatedAt).toLocaleString()}
+                    Last updated: {formatTimeAgo(currentToken.updatedAt)} ago
                   </div>
                 )}
               </div>
