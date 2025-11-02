@@ -28,10 +28,12 @@ export default function Home() {
     try {
       setIsRefreshing(true)
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'
+  
       const response = await axios.get(`${backendUrl}/api/ai-token`, {
         headers: {
           'Cache-Control': 'no-cache',
         },
+        timeout: 10000, // 10 second timeout
       })
 
       const data = response.data

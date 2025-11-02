@@ -11,9 +11,18 @@ async function refreshAccessToken(token: {
 }) {
   try {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
-    const response = await axios.post(`${backendUrl}/api/auth/refresh`, {
-      refreshToken: token.refreshToken,
-    });
+    const response = await axios.post(
+      `${backendUrl}/api/auth/refresh`,
+      {
+        refreshToken: token.refreshToken,
+      },
+      {
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+        timeout: 10000,
+      }
+    );
 
     const refreshedTokens = response.data;
 
@@ -57,6 +66,12 @@ export const authOptions: NextAuthOptions = {
               `${backendUrl}/api/auth/verify-token`,
               {
                 token: credentials.accessToken,
+              },
+              {
+                headers: {
+                  'Cache-Control': 'no-cache',
+                },
+                timeout: 10000,
               }
             );
 
@@ -93,6 +108,12 @@ export const authOptions: NextAuthOptions = {
             {
               username: credentials.username,
               password: credentials.password,
+            },
+            {
+              headers: {
+                'Cache-Control': 'no-cache',
+              },
+              timeout: 10000,
             }
           );
 
