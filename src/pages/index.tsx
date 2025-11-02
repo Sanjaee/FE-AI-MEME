@@ -34,7 +34,7 @@ export default function Home() {
     try {
       isFetchingRef.current = true
       setIsRefreshing(true)
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.zascript.com'
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'
   
       const response = await axios.get(`${backendUrl}/api/ai-token`, {
         headers: {
@@ -168,7 +168,7 @@ export default function Home() {
         <div className="absolute top-0 left-1/4 w-72 h-72 bg-cyan-900/5 rounded-full filter blur-3xl opacity-30"></div>
       </div>
       
-      <div className="container mx-auto px-6 py-8 max-w-[1920px] relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-[1920px] relative z-10">
         <Header 
           isRefreshing={isRefreshing} 
           lastUpdate={lastUpdate} 

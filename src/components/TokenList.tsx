@@ -44,12 +44,14 @@ export default function TokenList({ tokens, isLoading = false }: TokenListProps)
   // Show skeleton when loading
   if (isLoading) {
     return (
-      <div className="space-y-0">
-        <TokenTableHeader />
-        <div className="space-y-0">
-          {Array.from({ length: 10 }).map((_, index) => (
-            <TokenRowSkeleton key={`skeleton-${index}`} />
-          ))}
+      <div className="overflow-x-auto -mx-4 sm:mx-0">
+        <div className="space-y-0 min-w-[1200px]">
+          <TokenTableHeader />
+          <div className="space-y-0">
+            {Array.from({ length: 10 }).map((_, index) => (
+              <TokenRowSkeleton key={`skeleton-${index}`} />
+            ))}
+          </div>
         </div>
       </div>
     )
@@ -64,26 +66,28 @@ export default function TokenList({ tokens, isLoading = false }: TokenListProps)
   }
 
   return (
-    <div className="space-y-0">
-      <TokenTableHeader />
-      <div className="space-y-0">
-        {visibleTokens.map((token, index) => (
-          <TokenRow key={token.tokenAddress || index} token={token} />
-        ))}
+    <div className="overflow-x-auto -mx-4 sm:mx-0">
+      <div className="space-y-0 min-w-[1200px]">
+        <TokenTableHeader />
+        <div className="space-y-0">
+          {visibleTokens.map((token, index) => (
+            <TokenRow key={token.tokenAddress || index} token={token} />
+          ))}
+        </div>
+        
+        {/* Observer target for infinite scroll */}
+        {hasMore && (
+          <div ref={observerTarget} className="flex items-center justify-center py-8">
+            <div className="text-zinc-400 text-sm">Loading more tokens...</div>
+          </div>
+        )}
+        
+        {!hasMore && tokens.length > ITEMS_PER_PAGE && (
+          <div className="flex items-center justify-center py-8">
+            <div className="text-zinc-500 text-sm">All tokens loaded</div>
+          </div>
+        )}
       </div>
-      
-      {/* Observer target for infinite scroll */}
-      {hasMore && (
-        <div ref={observerTarget} className="flex items-center justify-center py-8">
-          <div className="text-zinc-400 text-sm">Loading more tokens...</div>
-        </div>
-      )}
-      
-      {!hasMore && tokens.length > ITEMS_PER_PAGE && (
-        <div className="flex items-center justify-center py-8">
-          <div className="text-zinc-500 text-sm">All tokens loaded</div>
-        </div>
-      )}
     </div>
   )
 }

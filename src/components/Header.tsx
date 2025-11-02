@@ -21,24 +21,24 @@ export default function Header({ isRefreshing, mounted }: HeaderProps) {
 
   return (
     <div className="mb-8">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
         <div>
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+          <h1 className="text-2xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
             Token AI Agent
           </h1>
-          <p className="text-zinc-500 text-sm font-medium">
+          <p className="text-zinc-500 text-xs sm:text-sm font-medium">
             Real-time market data & analytics
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 px-4 py-2 bg-zinc-900 rounded-lg border border-zinc-800 hover:border-zinc-700 transition-colors">
-            <Activity className={`h-4 w-4 ${isRefreshing ? "text-emerald-400 animate-pulse" : "text-zinc-500"}`} />
+        <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
+          <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-zinc-900 rounded-lg border border-zinc-800 hover:border-zinc-700 transition-colors">
+            <Activity className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isRefreshing ? "text-emerald-400 animate-pulse" : "text-zinc-500"}`} />
             <span className="text-xs text-zinc-400 font-medium">
               {isRefreshing ? "AI Updating..." : "Live"}
             </span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-zinc-900 rounded-lg border border-zinc-800 hover:border-zinc-700 transition-colors">
-            <Clock className="h-4 w-4 text-zinc-500" />
+          <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-zinc-900 rounded-lg border border-zinc-800 hover:border-zinc-700 transition-colors">
+            <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-zinc-500" />
             <span className="text-xs text-zinc-400 font-mono">
               {mounted
                 ? currentTime.toLocaleTimeString("en-US", {
