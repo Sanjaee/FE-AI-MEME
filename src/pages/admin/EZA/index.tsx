@@ -39,7 +39,7 @@ export default function AdminPage() {
     const fetchToken = async () => {
       try {
         setLoadingToken(true)
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.zascript.com'
         const response = await axios.get(`${backendUrl}/api/ai-token/token`)
         const data = response.data
 
@@ -69,7 +69,7 @@ export default function AdminPage() {
     }
 
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.zascript.com'
       const response = await axios.post(`${backendUrl}/api/ai-token/update`, {
         authAccessToken,
         authRefreshToken,

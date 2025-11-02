@@ -10,7 +10,7 @@ async function refreshAccessToken(token: {
   [key: string]: unknown;
 }) {
   try {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.zascript.com";
     const response = await axios.post(
       `${backendUrl}/api/auth/refresh`,
       {
@@ -60,7 +60,7 @@ export const authOptions: NextAuthOptions = {
         // Check if this is a direct token login (from OTP verification)
         if (credentials?.accessToken) {
           try {
-            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.zascript.com";
             // Verify the token with backend
             const response = await axios.post(
               `${backendUrl}/api/auth/verify-token`,
@@ -101,7 +101,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+          const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.zascript.com";
           // Regular username/password login
           const response = await axios.post(
             `${backendUrl}/api/auth/login`,

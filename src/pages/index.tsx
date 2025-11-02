@@ -27,7 +27,7 @@ export default function Home() {
   const fetchTokens = async () => {
     try {
       setIsRefreshing(true)
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.zascript.com'
   
       const response = await axios.get(`${backendUrl}/api/ai-token`, {
         headers: {
