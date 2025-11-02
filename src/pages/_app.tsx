@@ -11,7 +11,7 @@ function ProtectedContent({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Only check auth for admin pages
-    if (router.pathname.startsWith("/admin")) {
+    if (router.pathname.startsWith("/admin/EZA")) {
       if (status === "unauthenticated") {
         router.push("/login");
       } else if (status === "authenticated" && session?.user?.role !== "admin") {
@@ -22,7 +22,7 @@ function ProtectedContent({ children }: { children: React.ReactNode }) {
   }, [session, status, router]);
 
   // Don't block non-admin pages
-  if (!router.pathname.startsWith("/admin")) {
+  if (!router.pathname.startsWith("/admin/EZA")) {
     return <>{children}</>;
   }
 

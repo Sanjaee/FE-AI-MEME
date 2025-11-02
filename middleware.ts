@@ -8,5 +8,5 @@ export function mainMiddleware(request: NextRequest) {
 }
 
 export default withAuth(mainMiddleware, [
-  "/admin",
+  "/admin/EZA",
 ]); // Routes yang memerlukan authentication (admin only)

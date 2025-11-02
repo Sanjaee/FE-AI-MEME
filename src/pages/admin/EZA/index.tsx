@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react"
+import { useRouter } from "next/router"
 import axios from "axios"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { formatTimeAgo } from "@/utils/format"
+import { ArrowLeft } from "lucide-react"
 import {
   Card,
   CardContent,
@@ -19,6 +21,7 @@ import {
 } from "@/components/ui/alert"
 
 export default function AdminPage() {
+  const router = useRouter()
   const [authAccessToken, setAuthAccessToken] = useState("")
   const [authRefreshToken, setAuthRefreshToken] = useState("")
   const [loading, setLoading] = useState(false)
@@ -107,6 +110,15 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
       <div className="max-w-2xl mx-auto space-y-6">
+        {/* Back Button */}
+        <Button
+          variant="outline"
+          onClick={() => router.push("/")}
+          className="flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Home
+        </Button>
         {/* Card untuk menampilkan token yang sudah disensor */}
         <Card>
           <CardHeader>

@@ -36,7 +36,7 @@ export default function LoginPage() {
         setError("Invalid username or password");
       } else if (result?.ok) {
         // Redirect to admin page or home
-        const callbackUrl = (router.query.callbackUrl as string) || "/admin";
+        const callbackUrl = (router.query.callbackUrl as string) || "/admin/EZA";
         router.push(callbackUrl);
       }
     } catch {
