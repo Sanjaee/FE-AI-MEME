@@ -26,11 +26,52 @@ export default function Home() {
   const fetchTokens = async () => {
     try {
       setIsRefreshing(true)
-      const response = await fetch("http://localhost:5000/api/ai-token")
+      // Add cache busting dengan timestamp untuk memastikan data selalu fresh
+      const timestamp = Date.now()
+      const response = await fetch(`http://localhost:5000/api/ai-token?t=${timestamp}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+      })
       const data = await response.json()
 
       if (data.success && data.data && Array.isArray(data.data)) {
-        setTokens(data.data)
+        // Normalize snipersHoldPercent untuk semua token (maksimal 3.323437761849493)
+        const MAX_SNIPERS_HOLD_PERCENT = 3.323437761849493;
+        const normalizedTokens = data.data.map((token: TokenData) => {
+          if (token.snipersHoldPercent && token.snipersHoldPercent > MAX_SNIPERS_HOLD_PERCENT) {
+            return {
+              ...token,
+              snipersHoldPercent: MAX_SNIPERS_HOLD_PERCENT
+            };
+          }
+          return token;
+        });
+        
+        // Deduplicate berdasarkan tokenTicker, pilih yang marketCapSol paling besar
+        const tokenMap = new Map<string, TokenData>();
+        
+        normalizedTokens.forEach((token: TokenData) => {
+          const ticker = token.tokenTicker?.toLowerCase().trim() || '';
+          
+          // Skip jika tokenTicker kosong atau tidak valid
+          if (!ticker) return;
+          
+          const existing = tokenMap.get(ticker);
+          
+          // Jika belum ada atau marketCapSol lebih besar, simpan token ini
+          if (!existing || (token.marketCapSol > existing.marketCapSol)) {
+            tokenMap.set(ticker, token);
+          }
+        });
+        
+        // Convert map kembali ke array dan sort berdasarkan marketCapSol (descending)
+        const deduplicatedTokens = Array.from(tokenMap.values()).sort(
+          (a, b) => b.marketCapSol - a.marketCapSol
+        );
+        
+        setTokens(deduplicatedTokens)
         setLastUpdate(new Date())
         setError(null)
       } else {
@@ -57,7 +98,6 @@ export default function Home() {
     }, 1000)
 
     return () => clearInterval(interval)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

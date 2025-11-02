@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { TokenData } from "@/types/token"
 import TokenRow from "./token/TokenRow"
+import TokenTableHeader from "./token/TokenTableHeader"
 
 interface TokenListProps {
   tokens: TokenData[]
@@ -47,10 +48,13 @@ export default function TokenList({ tokens }: TokenListProps) {
   }
 
   return (
-    <div className="space-y-4">
-      {visibleTokens.map((token, index) => (
-        <TokenRow key={token.tokenAddress || index} token={token} />
-      ))}
+    <div className="space-y-0">
+      <TokenTableHeader />
+      <div className="space-y-0">
+        {visibleTokens.map((token, index) => (
+          <TokenRow key={token.tokenAddress || index} token={token} />
+        ))}
+      </div>
       
       {/* Observer target for infinite scroll */}
       {hasMore && (
