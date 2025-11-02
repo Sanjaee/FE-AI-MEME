@@ -25,9 +25,7 @@ export default function Home() {
   const fetchTokens = async () => {
     try {
       setIsRefreshing(true)
-      // Add cache busting dengan timestamp untuk memastikan data selalu fresh
-      const timestamp = Date.now()
-      const response = await fetch(`http://localhost:5000/api/ai-token?t=${timestamp}`, {
+      const response = await fetch(`http://localhost:5000/api/ai-token`, {
         cache: 'no-store',
         headers: {
           'Cache-Control': 'no-cache',
@@ -121,7 +119,7 @@ export default function Home() {
 
   return (
     <div
-      className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-black text-white relative overflow-hidden`}
+      className={`${geistSans.variable} ${geistMono.variable} min-h-screen container mx-auto max-w-[1440px] bg-black text-white relative overflow-hidden`}
     >
       {/* Subtle background glow */}
       <div className="absolute inset-0 pointer-events-none">
