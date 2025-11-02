@@ -12,7 +12,7 @@ export default function Header({ isRefreshing, lastUpdate, mounted }: HeaderProp
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
-            Token Intelligence
+            Token AI Agent
           </h1>
           <p className="text-zinc-500 text-sm font-medium">
             Real-time market data & analytics

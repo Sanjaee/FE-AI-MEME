@@ -2,7 +2,6 @@ import { useState, useEffect } from "react"
 import { Geist, Geist_Mono } from "next/font/google"
 import { TokenData } from "@/types/token"
 import Header from "@/components/Header"
-import SummaryStats from "@/components/SummaryStats"
 import TokenList from "@/components/TokenList"
 
 const geistSans = Geist({
@@ -66,12 +65,32 @@ export default function Home() {
           }
         });
         
-        // Convert map kembali ke array dan sort berdasarkan marketCapSol (descending)
-        const deduplicatedTokens = Array.from(tokenMap.values()).sort(
-          (a, b) => b.marketCapSol - a.marketCapSol
-        );
+        // Convert map kembali ke array
+        const deduplicatedTokens = Array.from(tokenMap.values());
         
-        setTokens(deduplicatedTokens)
+        // Filter hanya token dengan devHoldsPercent = 0
+        const filteredTokens = deduplicatedTokens.filter((token: TokenData) => {
+          return token.devHoldsPercent === 0 || 
+                 token.devHoldsPercent === null || 
+                 token.devHoldsPercent === undefined ||
+                 (typeof token.devHoldsPercent === 'number' && Math.abs(token.devHoldsPercent) < 0.0001);
+        });
+        
+        // Sort berdasarkan date terbaru (prioritas utama), volumeSol sebagai secondary
+        const sortedTokens = filteredTokens.sort((a, b) => {
+          // Ambil date terbaru (prioritaskan openTrading, fallback ke createdAt)
+          const dateA = new Date(a.openTrading || a.createdAt).getTime();
+          const dateB = new Date(b.openTrading || b.createdAt).getTime();
+          
+          // Prioritaskan date terbaru (descending - yang terbaru di atas)
+          if (dateB !== dateA) {
+            return dateB - dateA;
+          }
+          // Jika date sama, urutkan berdasarkan volumeSol (descending)
+          return b.volumeSol - a.volumeSol;
+        });
+        
+        setTokens(sortedTokens)
         setLastUpdate(new Date())
         setError(null)
       } else {
@@ -116,8 +135,6 @@ export default function Home() {
           lastUpdate={lastUpdate} 
           mounted={mounted} 
         />
-        
-        <SummaryStats tokens={tokens} />
 
         {loading ? (
           <div className="flex items-center justify-center py-20">

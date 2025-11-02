@@ -234,3 +234,7 @@ body {
     @apply w-32 h-7 bg-black rounded-b-3xl;
   }
 }
+
+.ri-user-star-line:before {
+  content: "\f276";
+}
