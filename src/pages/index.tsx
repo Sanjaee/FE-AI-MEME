@@ -5,6 +5,7 @@ import { TokenData } from "@/types/token"
 import Header from "@/components/Header"
 import TokenList from "@/components/TokenList"
 import MaintenanceDialog from "@/components/MaintenanceDialog"
+import PlisioMarquee from "@/components/PlisioMarquee"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -160,15 +161,18 @@ export default function Home() {
 
   return (
     <div
-      className={`${geistSans.variable} ${geistMono.variable} min-h-screen container mx-auto max-w-[1440px] bg-black text-white relative overflow-hidden`}
+      className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-black text-white relative overflow-hidden`}
     >
+      {/* Plisio Marquee at the very top */}
+      <PlisioMarquee />
+      
       {/* Subtle background glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-900/10 rounded-full filter blur-3xl opacity-50"></div>
         <div className="absolute top-0 left-1/4 w-72 h-72 bg-cyan-900/5 rounded-full filter blur-3xl opacity-30"></div>
       </div>
       
-      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-[1920px] relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-[1440px] relative z-10">
         <Header 
           isRefreshing={isRefreshing} 
           lastUpdate={lastUpdate} 
