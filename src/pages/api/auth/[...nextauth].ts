@@ -37,7 +37,10 @@ async function refreshAccessToken(token: {
       refreshToken: refreshedTokens.refreshToken ?? token.refreshToken,
     };
   } catch (error) {
-    console.error("Error refreshing access token:", error);
+    // Only log errors in development mode
+    if (process.env.NODE_ENV === 'development') {
+      console.error("Error refreshing access token:", error);
+    }
 
     return {
       ...token,
@@ -90,7 +93,10 @@ export const authOptions: NextAuthOptions = {
             }
             return null;
           } catch (error) {
-            console.error("Token verification error:", error);
+            // Only log errors in development mode
+            if (process.env.NODE_ENV === 'development') {
+              console.error("Token verification error:", error);
+            }
             return null;
           }
         }
@@ -133,7 +139,10 @@ export const authOptions: NextAuthOptions = {
 
           return null;
         } catch (error) {
-          console.error("Auth error:", error);
+          // Only log errors in development mode
+          if (process.env.NODE_ENV === 'development') {
+            console.error("Auth error:", error);
+          }
           return null;
         }
       },

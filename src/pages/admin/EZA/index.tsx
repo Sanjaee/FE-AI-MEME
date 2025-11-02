@@ -47,7 +47,10 @@ export default function AdminPage() {
           setCurrentToken(data.data)
         }
       } catch (err) {
-        console.error("Failed to fetch token:", err)
+        // Only log errors in development mode
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Failed to fetch token:", err)
+        }
       } finally {
         setLoadingToken(false)
       }

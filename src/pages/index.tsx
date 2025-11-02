@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Geist, Geist_Mono } from "next/font/google"
 import axios from "axios"
 import { TokenData } from "@/types/token"
@@ -23,9 +23,16 @@ export default function Home() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [showMaintenance, setShowMaintenance] = useState(false)
+  const isFetchingRef = useRef(false)
 
-  const fetchTokens = async () => {
+  const fetchTokens = useCallback(async () => {
+    // Prevent concurrent requests
+    if (isFetchingRef.current) {
+      return
+    }
+    
     try {
+      isFetchingRef.current = true
       setIsRefreshing(true)
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.zascript.com'
   
@@ -103,19 +110,44 @@ export default function Home() {
         setShowMaintenance(false)
       }
     } catch (err) {
-      // Hanya tampilkan maintenance jika fetch benar-benar gagal (network error, HTTP error, dll)
-      console.error("Error fetching tokens:", err)
-      setShowMaintenance(true)
+      // Hanya tampilkan maintenance jika terjadi network/fetch error
+      // Network errors: timeout, connection refused, no network, dll
+      // Bukan network errors: HTTP 4xx/5xx (sudah dapat response dari server)
+      
+      const isNetworkError = axios.isAxiosError(err) && (
+        // Timeout error
+        err.code === 'ECONNABORTED' ||
+        // Network error (no connection, CORS, dll)
+        err.code === 'ERR_NETWORK' ||
+        err.code === 'ERR_CONNECTION_REFUSED' ||
+        err.code === 'ERR_CONNECTION_TIMED_OUT' ||
+        // No response means network error
+        !err.response
+      )
+      
+      // Only show maintenance for network/fetch errors
+      if (isNetworkError) {
+        // Silently handle network errors - no logging
+        setShowMaintenance(true)
+      } else {
+        // For other errors (HTTP errors, validation errors, dll), silently handle
+        // Don't show maintenance, just keep existing tokens
+        setShowMaintenance(false)
+      }
+      
+      // Silently catch and handle all errors - no console logging
+      // Error is already handled above (show/hide maintenance dialog)
     } finally {
       setLoading(false)
       setIsRefreshing(false)
+      isFetchingRef.current = false
     }
-  }
+  }, [])
 
   useEffect(() => {
     setMounted(true)
     fetchTokens()
-  }, [])
+  }, [fetchTokens])
 
   // Auto refresh every 1 second
   useEffect(() => {
@@ -124,7 +156,7 @@ export default function Home() {
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [fetchTokens])
 
   return (
     <div
