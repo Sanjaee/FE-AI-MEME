@@ -38,7 +38,7 @@ export default function PlisioMarquee() {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'
       
       const response = await axios.get<BackendResponse>(
-        `${backendUrl}/api/plisio/currencies`,
+        `${backendUrl}/api/currencies`,
         {
           timeout: 10000,
         }

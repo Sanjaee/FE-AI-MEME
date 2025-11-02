@@ -23,9 +23,11 @@ export default function Header({ isRefreshing, mounted }: HeaderProps) {
     <div className="mb-8">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
         <div>
-          <h1 className="text-2xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent relative inline-block">
+        <h1 className="text-2xl sm:text-4xl font-bold mb-2 relative inline-block overflow-hidden">
+          <span className="bg-clip-text text-transparent animate-gradient-shine">
             Token AI Agent
-          </h1>
+          </span>
+        </h1>
           <p className="text-zinc-500 text-xs sm:text-sm font-medium">
             Real-time market data & analytics
           </p>
