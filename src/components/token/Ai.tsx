@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { AiOutlineMessage, AiOutlineClose } from "react-icons/ai";
 import React from "react";
+import axios from "axios";
 
 const ChatAiButton = ({ initialResponse = "", initialRequestContent = "" }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -54,30 +55,26 @@ const ChatAiButton = ({ initialResponse = "", initialRequestContent = "" }) => {
       try {
         // Get API URL from environment variable or use default
         const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.zascript.com";
-        const response = await fetch(
+        const response = await axios.post(
           `${API_URL}/api/ai-chat/chat`,
           {
-            method: "POST",
+            content: message, // Support legacy format
+            messages: [
+              {
+                role: "user",
+                content: message,
+              },
+            ],
+          },
+          {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              content: message, // Support legacy format
-              messages: [
-                {
-                  role: "user",
-                  content: message,
-                },
-              ],
-            }),
+            timeout: 10000, // 10 second timeout
           }
         );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = response.data;
         
         // Handle response format
         if (data.success && data.response) {
@@ -88,7 +85,11 @@ const ChatAiButton = ({ initialResponse = "", initialRequestContent = "" }) => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        setResponse("Sorry, there was an error processing your request. Please try again.");
+        if (axios.isAxiosError(error) && error.response?.data?.error) {
+          setResponse(`Error: ${error.response.data.error}`);
+        } else {
+          setResponse("Sorry, there was an error processing your request. Please try again.");
+        }
       } finally {
         setIsLoading(false);
         setMessage("");
