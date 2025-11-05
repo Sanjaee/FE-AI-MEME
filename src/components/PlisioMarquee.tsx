@@ -35,7 +35,7 @@ export default function PlisioMarquee() {
 
   const fetchPlisioData = async () => {
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.zascript.com'
       
       const response = await axios.get<BackendResponse>(
         `${backendUrl}/api/currencies`,

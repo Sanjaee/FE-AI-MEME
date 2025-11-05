@@ -6,6 +6,7 @@ import Header from "@/components/Header"
 import TokenList from "@/components/TokenList"
 import MaintenanceDialog from "@/components/MaintenanceDialog"
 import PlisioMarquee from "@/components/PlisioMarquee"
+import ChatAiButton from "@/components/token/Ai"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +36,7 @@ export default function Home() {
     try {
       isFetchingRef.current = true
       setIsRefreshing(true)
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.zascript.com'
   
       const response = await axios.get(`${backendUrl}/api/ai-token`, {
         headers: {
@@ -188,6 +189,9 @@ export default function Home() {
           window.location.reload()
         }}
       />
+
+      {/* AI Chat Component */}
+      <ChatAiButton />
     </div>
   )
 }
