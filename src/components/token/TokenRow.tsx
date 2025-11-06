@@ -3,19 +3,14 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Tooltip } from "@/components/ui/tooltip"
 import {
   Globe,
-  Link2,
-  Search,
-  Edit,
   Users,
-  TrendingUp,
-  TrendingDown,
   Copy,
   Check,
 } from "lucide-react"
 import { FaXTwitter } from "react-icons/fa6"
-import { LuChartCandlestick } from "react-icons/lu"
+import { LuChartCandlestick, LuBoxes } from "react-icons/lu"
 import { RiUserStarLine } from "react-icons/ri"
-import { FaChessKing, FaGhost } from "react-icons/fa"
+import { FaChessKing, FaGhost, FaCrosshairs } from "react-icons/fa"
 import { MdRadioButtonChecked } from "react-icons/md"
 import { TokenData } from "@/types/token"
 import { formatNumber, formatTimeAgo, calculateChangePercent } from "@/utils/format"
@@ -177,13 +172,13 @@ export default function TokenRow({ token }: TokenRowProps) {
           <div className="flex items-center justify-between text-xs gap-2">
             <Tooltip content="Bundlers Hold" side="top">
               <span className="text-emerald-400 flex items-center gap-1.5 truncate cursor-pointer">
-                <TrendingUp className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate">0%</span>
+                <LuBoxes className="h-3.5 w-3.5 shrink-0" />
+                <span className="truncate">{token.bundlersHoldPercent?.toFixed(2) || '0.00'}%</span>
               </span>
             </Tooltip>
             <Tooltip content="Snipers Hold" side="top">
               <span className="text-rose-400 flex items-center gap-1.5 truncate cursor-pointer">
-                <TrendingDown className="h-3.5 w-3.5 shrink-0" />
+                <FaCrosshairs className="h-3.5 w-3.5 shrink-0" />
                 <span className="truncate">{token.snipersHoldPercent.toFixed(2)}%</span>
               </span>
             </Tooltip>

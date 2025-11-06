@@ -25,6 +25,7 @@ export default function Home() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [showMaintenance, setShowMaintenance] = useState(false)
+  const [tokenApiError, setTokenApiError] = useState(false)
   const isFetchingRef = useRef(false)
 
   const fetchTokens = useCallback(async () => {
@@ -105,14 +106,16 @@ export default function Home() {
         setTokens(sortedTokens)
         setLastUpdate(new Date())
         setShowMaintenance(false)
+        setTokenApiError(false)
       } else {
         // Jika data tidak valid, set empty tokens tapi tidak tampilkan maintenance
         setTokens([])
         setLastUpdate(new Date())
         setShowMaintenance(false)
+        setTokenApiError(false)
       }
     } catch (err) {
-      // Hanya tampilkan maintenance jika terjadi network/fetch error
+      // Hanya tampilkan maintenance jika terjadi network/fetch error dari TOKEN API
       // Network errors: timeout, connection refused, no network, dll
       // Bukan network errors: HTTP 4xx/5xx (sudah dapat response dari server)
       
@@ -127,13 +130,16 @@ export default function Home() {
         !err.response
       )
       
-      // Only show maintenance for network/fetch errors
+      // Only show maintenance for network/fetch errors from TOKEN API
+      // This is specifically for /api/ai-token endpoint
       if (isNetworkError) {
-        // Silently handle network errors - no logging
+        // Set token API error flag
+        setTokenApiError(true)
         setShowMaintenance(true)
       } else {
         // For other errors (HTTP errors, validation errors, dll), silently handle
         // Don't show maintenance, just keep existing tokens
+        setTokenApiError(false)
         setShowMaintenance(false)
       }
       
@@ -183,10 +189,13 @@ export default function Home() {
         <TokenList tokens={tokens} isLoading={loading} />
       </div>
 
+      {/* MaintenanceDialog hanya muncul jika ada error dari Token API */}
       <MaintenanceDialog
-        isOpen={showMaintenance}
+        isOpen={showMaintenance && tokenApiError}
         onRetry={() => {
-          window.location.reload()
+          setTokenApiError(false)
+          setShowMaintenance(false)
+          fetchTokens()
         }}
       />
 
