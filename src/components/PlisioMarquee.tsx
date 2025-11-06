@@ -149,7 +149,7 @@ export default function PlisioMarquee() {
 
   return (
     <div className="bg-zinc-900 border-b border-zinc-800">
-      <Marquee gradient={false} speed={50} pauseOnHover={true}>
+      <Marquee gradient={false} speed={100} pauseOnHover={true}>
         {currencies.map((currency, index) => {
           const currencyColor = getCurrencyColor(currency.cid)
           return (
