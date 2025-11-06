@@ -97,11 +97,21 @@ const ChatAiButton = ({ initialResponse = "", initialRequestContent = "" }) => {
     }
   };
 
-  // Fungsi untuk menampilkan respon secara bertahap (lebih cepat)
+  // Fungsi untuk menampilkan respon secara bertahap (lebih cepat dengan chunk-based)
   const display = async (text: string) => {
-    for (const char of text) {
-      setResponse((prevResponse) => prevResponse + char);
-      await new Promise((resolve) => setTimeout(resolve, 0.01)); // Dipercepat dari 3ms ke 1ms
+    const chunkSize = 10; // Render 10 karakter sekaligus untuk lebih cepat
+    
+    for (let i = 0; i < text.length; i += chunkSize) {
+      const chunk = text.slice(i, i + chunkSize);
+      setResponse((prevResponse) => prevResponse + chunk);
+      
+      // Gunakan requestAnimationFrame untuk batch update yang lebih efisien
+      // Ini akan sync dengan browser refresh rate (~60fps) untuk performa optimal
+      if (i + chunkSize < text.length) {
+        await new Promise((resolve) => {
+          requestAnimationFrame(resolve);
+        });
+      }
     }
   };
 
