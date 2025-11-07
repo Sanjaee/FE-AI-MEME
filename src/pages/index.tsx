@@ -42,8 +42,7 @@ export default function Home() {
       const response = await axios.get(`${backendUrl}/api/ai-token`, {
         headers: {
           'Cache-Control': 'no-cache',
-        },
-        timeout: 10000, // 10 second timeout
+        }
       })
 
       const data = response.data

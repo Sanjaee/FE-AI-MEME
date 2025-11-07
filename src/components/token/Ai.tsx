@@ -69,8 +69,7 @@ const ChatAiButton = ({ initialResponse = "", initialRequestContent = "" }) => {
           {
             headers: {
               "Content-Type": "application/json",
-            },
-            timeout: 10000, // 10 second timeout
+            }
           }
         );
 

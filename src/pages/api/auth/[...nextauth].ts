@@ -20,7 +20,6 @@ async function refreshAccessToken(token: {
         headers: {
           'Cache-Control': 'no-cache',
         },
-        timeout: 10000,
       }
     );
 
@@ -74,7 +73,6 @@ export const authOptions: NextAuthOptions = {
                 headers: {
                   'Cache-Control': 'no-cache',
                 },
-                timeout: 10000,
               }
             );
 
@@ -119,7 +117,6 @@ export const authOptions: NextAuthOptions = {
               headers: {
                 'Cache-Control': 'no-cache',
               },
-              timeout: 10000,
             }
           );
 
