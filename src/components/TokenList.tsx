@@ -1,17 +1,19 @@
 import { useEffect, useRef, useState } from "react"
 import { TokenData } from "@/types/token"
 import TokenRow from "./token/TokenRow"
+import TokenBnbRow from "./token/TokenBnbRow"
 import TokenTableHeader from "./token/TokenTableHeader"
 import TokenRowSkeleton from "./token/TokenRowSkeleton"
 
 interface TokenListProps {
   tokens: TokenData[]
   isLoading?: boolean
+  chain?: "solana" | "bnb"
 }
 
 const ITEMS_PER_PAGE = 20
 
-export default function TokenList({ tokens, isLoading = false }: TokenListProps) {
+export default function TokenList({ tokens, isLoading = false, chain = "solana" }: TokenListProps) {
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE)
   const observerTarget = useRef<HTMLDivElement>(null)
 
@@ -70,9 +72,13 @@ export default function TokenList({ tokens, isLoading = false }: TokenListProps)
       <div className="space-y-0 min-w-[1200px]">
         <TokenTableHeader />
         <div className="space-y-0">
-          {visibleTokens.map((token, index) => (
-            <TokenRow key={token.tokenAddress || index} token={token} />
-          ))}
+          {visibleTokens.map((token, index) => 
+            chain === "bnb" ? (
+              <TokenBnbRow key={token.tokenAddress || index} token={token} />
+            ) : (
+              <TokenRow key={token.tokenAddress || index} token={token} />
+            )
+          )}
         </div>
         
         {/* Observer target for infinite scroll */}
